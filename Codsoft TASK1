@@ -1,0 +1,148 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score
+# Step 1: Load and explore data (assuming data is already cleaned and preprocessed)
+data = pd.read_csv('Churn_Modelling.csv')
+
+# Initialize LabelEncoder
+label_encoder = LabelEncoder()
+
+# Encode categorical columns
+data['Surname'] = label_encoder.fit_transform(data['Surname'])
+data['Geography'] = label_encoder.fit_transform(data['Geography'])
+data['Gender'] = label_encoder.fit_transform(data['Gender'])
+
+# Step 2: Define features and target variable
+X = data.drop(['Exited'], axis=1)  # Features
+y = data['Exited']  # Target variable (Churn indicator)
+
+# Step 3: Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 4: Feature scaling
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Step 5: Model training and evaluation (Random Forest example)
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Predictions for training set
+y_train_pred = model.predict(X_train)
+
+# Calculate accuracy on training data
+accuracy_train = accuracy_score(y_train, y_train_pred)
+print("Accuracy for the training model:", accuracy_train)
+
+# Predictions for test set
+y_pred = model.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy for the test model:", accuracy)
+
+# Evaluation
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
+# Step 1: Load and explore data (assuming data is already cleaned and preprocessed)
+data = pd.read_csv('Churn_Modelling.csv')
+
+# Initialize LabelEncoder
+label_encoder_surname = LabelEncoder()
+label_encoder_geography = LabelEncoder()
+label_encoder_gender = LabelEncoder()
+
+# Encode categorical columns
+data['Surname'] = label_encoder_surname.fit_transform(data['Surname'])
+data['Geography'] = label_encoder_geography.fit_transform(data['Geography'])
+data['Gender'] = label_encoder_gender.fit_transform(data['Gender'])
+
+# Step 2: Define features and target variable
+X = data.drop(['Exited'], axis=1)  # Features
+y = data['Exited']  # Target variable (Churn indicator)
+
+# Step 3: Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 4: Feature scaling
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Step 5: Model training and evaluation (Random Forest example)
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Predictions for training set
+y_train_pred = model.predict(X_train_scaled)
+
+# Calculate accuracy on training data
+accuracy_train = accuracy_score(y_train, y_train_pred)
+print("Accuracy for the training model:", accuracy_train)
+
+# Predictions for test set
+y_pred = model.predict(X_test_scaled)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy for the test model:", accuracy)
+
+# Evaluation
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Function to predict churn for new customer input
+def predict_churn(input_data):
+    # Encode categorical features using the same encoders
+    input_data['Surname'] = label_encoder_surname.transform([input_data['Surname']])[0]
+    input_data['Geography'] = label_encoder_geography.transform([input_data['Geography']])[0]
+    input_data['Gender'] = label_encoder_gender.transform([input_data['Gender']])[0]
+
+    # Create DataFrame from input data
+    input_df = pd.DataFrame([input_data])
+
+    # Scale features using the same scaler
+    input_scaled = scaler.transform(input_df)
+
+    # Predict churn
+    prediction = model.predict(input_scaled)
+    return 'Churn' if prediction[0] == 1 else 'No Churn'
+
+# Collect user input
+def get_user_input():
+    user_input = {}
+    user_input['RowNumber'] = int(input("Enter Row Number: "))
+    user_input['CustomerId'] = int(input("Enter Customer ID: "))
+    user_input['Surname'] = input("Enter Surname: ")
+    user_input['CreditScore'] = int(input("Enter Credit Score: "))
+    user_input['Geography'] = input("Enter Geography (France, Spain, Germany): ")
+    user_input['Gender'] = input("Enter Gender (Male, Female): ")
+    user_input['Age'] = int(input("Enter Age: "))
+    user_input['Tenure'] = int(input("Enter Tenure: "))
+    user_input['Balance'] = float(input("Enter Balance: "))
+    user_input['NumOfProducts'] = int(input("Enter Number of Products: "))
+    user_input['HasCrCard'] = int(input("Enter Has Credit Card (0 or 1): "))
+    user_input['IsActiveMember'] = int(input("Enter Is Active Member (0 or 1): "))
+    user_input['EstimatedSalary'] = float(input("Enter Estimated Salary: "))
+    return user_input
+
+# Get user input and predict churn
+user_input = get_user_input()
+result = predict_churn(user_input)
+print("Churn Prediction for the given input data:", result)
